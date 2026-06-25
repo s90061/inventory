@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>報表｜庫存管理系統</title>
+  <link rel="stylesheet" href="/static/style.css?v=52">
+  <link rel="stylesheet" href="/static/report.css?v=6">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="banner">
+    <a href="/" class="back-btn">← 返回</a>
+    <h1 class="banner-title">📊 庫存報表</h1>
+    <span style="flex:1"></span>
+    <button class="btn btn-icon" onclick="exportData()" title="匯出">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><polyline points="9 15 12 12 15 15"/></svg>
+    </button>
+    <button class="btn btn-icon" onclick="document.getElementById('import-file').click()" title="匯入">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M12 12v6"/><polyline points="9 15 12 18 15 15"/></svg>
+    </button>
+    <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+  </div>
+
+  <div class="report-container">
+    <!-- KPI Cards -->
+    <div class="kpi-grid" id="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">總品項</div>
+        <div class="kpi-value shimmer" id="kpi-products">-</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">總庫存量</div>
+        <div class="kpi-value shimmer" id="kpi-qty">-</div>
+      </div>
+      <div class="kpi-card low">
+        <div class="kpi-label">⚠ 低庫存警示</div>
+        <div class="kpi-value shimmer" id="kpi-low">-</div>
+      </div>
+    </div>
+
+    <!-- Low Stock Alert -->
+    <div class="section low-stock-section" id="low-stock-section" style="display:none">
+      <h2>⚠ 低庫存商品</h2>
+      <div class="low-stock-list" id="low-stock-list"></div>
+    </div>
+
+    <!-- Trends Chart -->
+    <div class="chart-section">
+      <div class="chart-header">
+        <h2>進出貨趨勢 (30天)</h2>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="trendsChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Category Distribution -->
+    <div class="chart-section">
+      <div class="chart-header">
+        <h2>分類分佈</h2>
+      </div>
+      <div class="chart-wrap chart-wrap--half">
+        <canvas id="categoryChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Recent Logs -->
+    <div class="section">
+      <h2>最近異動</h2>
+      <div class="log-list" id="log-list">
+        <div class="log-item shimmer-text">載入中...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/report.js?v=6"></script>
+</body>
+</html>

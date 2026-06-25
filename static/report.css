@@ -1,0 +1,123 @@
+/* ── Report Page Styles (延續奢華暗色主題) ──────── */
+
+.back-btn {
+  color: var(--gold);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 6px 12px;
+  border: 1px solid rgba(201,168,76,0.25);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.back-btn:hover { background: rgba(201,168,76,0.1); }
+
+.banner-title { margin: 0; font-size: 20px; }
+.banner { display: flex; align-items: center; gap: 16px; }
+
+.report-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px 16px 40px;
+}
+
+/* ── KPI Grid ──────────────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid rgba(201,168,76,0.08);
+  border-radius: var(--radius);
+  padding: 18px 16px;
+  text-align: center;
+}
+.kpi-card.low { border-color: rgba(255,90,90,0.15); }
+.kpi-label { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
+.kpi-value { font-size: 28px; font-weight: 700; color: var(--gold); }
+.kpi-card.low .kpi-value { color: var(--red-text); }
+
+.shimmer { animation: shimmer 1.2s ease-in-out infinite; background: linear-gradient(90deg, var(--bg-card) 25%, #2a2a2a 37%, var(--bg-card) 63%); background-size: 400% 100%; }
+.shimmer-text { animation: shimmerText 1.2s ease-in-out infinite; }
+@keyframes shimmer { 0% { background-position: 100% 0; } 100% { background-position: 0 0; } }
+@keyframes shimmerText { 0%, 100% { opacity: 0.3; } 50% { opacity: 0.6; } }
+
+/* ── Chart Sections ────────────────────────────── */
+.chart-section, .section {
+  background: var(--bg-card);
+  border: 1px solid rgba(201,168,76,0.08);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.chart-header { margin-bottom: 16px; }
+.chart-header h2, .section h2 { font-size: 15px; font-weight: 600; margin: 0; color: var(--text); }
+.chart-wrap { position: relative; height: 300px; width: 100%; }
+.chart-wrap--half { height: 250px; }
+
+/* ── Log List ──────────────────────────────────── */
+.log-list { max-height: 360px; overflow-y: auto; }
+.log-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  font-size: 13px;
+}
+.log-item:last-child { border-bottom: none; }
+.log-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+.log-qty { font-weight: 600; margin: 0 12px; white-space: nowrap; }
+.log-qty.in { color: #4CAF50; }
+.log-qty.out { color: var(--red-text); }
+.log-time { font-size: 11px; color: var(--text-muted); white-space: nowrap; }
+
+/* ── Low Stock ─────────────────────────────────── */
+.low-stock-list {
+  display: flex; flex-direction: column; gap: 12px;
+}
+.low-stock-group {
+  display: flex; flex-direction: column; gap: 6px;
+}
+.low-stock-cat-label {
+  font-size: 11px; font-weight: 600; color: var(--gold);
+  text-transform: uppercase; letter-spacing: 0.5px;
+  padding-left: 2px;
+}
+.low-stock-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba(212,91,91,0.10);
+  border: 1px solid rgba(212,91,91,0.18);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+}
+.low-stock-name {
+  font-weight: 500; flex: 1; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.low-stock-status {
+  display: flex; align-items: center; gap: 6px;
+  font-weight: 600; color: var(--red-text); white-space: nowrap;
+}
+.low-stock-bar-wrap {
+  width: 60px; height: 6px; background: rgba(255,255,255,0.12);
+  border-radius: 3px; overflow: hidden; flex-shrink: 0;
+}
+.low-stock-bar {
+  height: 100%; background: var(--red-text); border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* ── Mobile ────────────────────────────────────── */
+@media (max-width: 640px) {
+  .kpi-grid { grid-template-columns: 1fr; gap: 10px; }
+  .kpi-card { padding: 14px; }
+  .kpi-value { font-size: 24px; }
+  .chart-wrap { height: 240px; }
+  .chart-wrap--half { height: 200px; }
+  .report-container { padding: 14px 12px 30px; }
+  .banner { padding: 10px 12px; }
+}

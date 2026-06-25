@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>庫存管理系統</title>
+  <link rel="stylesheet" href="/static/style.css?v=55">
+</head>
+<body>
+
+<header class="app-header">
+  <h1>📦 庫存管理</h1>
+  <span style="flex:1"></span>
+  <span id="product-count" class="count-badge">0 件</span>
+  <a href="/report" class="btn btn-report-header">📊 報表</a>
+</header>
+
+<nav class="toolbar">
+  <button class="btn btn-gold" onclick="openAddModal()">＋ 新增商品</button>
+  <button class="btn btn-scan" onclick="scanAndAdd()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>掃碼入庫
+  </button>
+  <button class="btn btn-scan btn-scan-out" onclick="scanAndRemove()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;margin-right:4px"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><line x1="6" y1="12" x2="18" y2="12"/></svg>掃碼出庫
+  </button>
+  <div class="view-toggle">
+    <button class="vt-btn active" id="vt-card" onclick="setViewMode('card')" title="卡片">▦</button>
+    <button class="vt-btn" id="vt-list" onclick="setViewMode('list')" title="清單">☰</button>
+  </div>
+  <div class="search-box">
+    <input type="text" id="search-input" placeholder="搜尋商品…" oninput="loadProducts()">
+  </div>
+  <select id="category-filter" onchange="loadProducts()" class="de-form-select">
+    <option value="">全部分類</option>
+  </select>
+</nav>
+
+<div id="product-grid" class="product-grid">
+  <div class="empty-state">尚無商品，點擊「＋ 新增商品」開始</div>
+</div>
+
+<!-- ══════ MODAL: 新增/編輯 ══════ -->
+<div id="modal-overlay" class="modal-overlay" onclick="closeModal()"></div>
+<div id="product-modal" class="modal-box">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-title">新增商品</h2>
+      <button class="btn-close" onclick="closeModal()">✕</button>
+    </div>
+    <form id="product-form" onsubmit="submitProduct(event);return false">
+      <input type="hidden" id="edit-id">
+
+      <label>商品照片</label>
+      <div class="photo-row">
+        <input type="file" id="photo-input" accept="image/*" capture="environment" onchange="previewPhoto(event)" class="photo-file-input">
+        <button type="button" class="photo-btn" onclick="document.getElementById('photo-input').click()">📷 拍照</button>
+        <img id="photo-preview" src="" alt="" class="photo-thumb">
+      </div>
+
+      <label>商品名稱 *</label>
+      <input type="text" id="prod-name" required placeholder="例：A4 影印紙">
+
+      <label>條碼</label>
+      <div class="barcode-row">
+        <input type="text" id="prod-barcode" placeholder="手動輸入或點右邊掃描" class="de-form">
+        <button type="button" class="btn btn-outline btn-sm" onclick="scanBarcodeToField()">📷 掃碼</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label>數量</label>
+          <input type="number" id="prod-qty" value="0" step="any" class="de-form">
+        </div>
+        <div class="form-col form-col-sm">
+          <label>單位</label>
+          <input type="text" id="prod-unit" value="個" placeholder="個/箱/包" class="de-form">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label>分類</label>
+          <input type="text" id="prod-category" placeholder="例：ZEUS瑞獅" list="category-list" class="de-form" style="background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 12 12%22%3E%3Cpath fill=%22%23888%22 d=%22M6 8L1 3h10z%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 14px center;padding-right:34px" onfocus="this.value='';showDatalist(this)" onclick="this.value='';showDatalist(this)">
+          <datalist id="category-list">
+            <option value="ZEUS瑞獅">
+            <option value="ASTONE">
+            <option value="EVO華泰">
+          </datalist>
+        </div>
+        <div class="form-col form-col-sm">
+          <label>安全庫存</label>
+          <input type="number" id="prod-min-qty" value="0" step="any" class="de-form">
+        </div>
+      </div>
+
+      <label>備註</label>
+      <textarea id="prod-notes" rows="2" placeholder="選填" class="de-form"></textarea>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeModal()">取消</button>
+        <button type="submit" class="btn btn-gold">儲存</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════ MODAL: 進出貨 ══════ -->
+<div id="adjust-modal" class="modal-box">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="adjust-title">調整庫存</h2>
+      <button class="btn-close" onclick="closeAdjustModal()">✕</button>
+    </div>
+    <form id="adjust-form" onsubmit="submitAdjust(event);return false">
+      <input type="hidden" id="adjust-id">
+      <p id="adjust-product-name" class="adjust-name"></p>
+      <p class="adjust-current">目前庫存：<strong id="adjust-current-qty">0</strong></p>
+
+      <div class="adjust-buttons">
+        <button type="button" class="btn btn-out" onclick="setInOut(-1)">−1 出貨</button>
+        <button type="button" class="btn btn-in" onclick="setInOut(1)">+1 進貨</button>
+      </div>
+
+      <div class="form-row">
+        <div class="form-col">
+          <label>進貨數量</label>
+          <input type="number" id="adjust-in" min="0" step="1" placeholder="0" class="de-form" inputmode="numeric">
+        </div>
+        <div class="form-col">
+          <label>出貨數量</label>
+          <input type="number" id="adjust-out" min="0" step="1" placeholder="0" class="de-form" inputmode="numeric">
+        </div>
+      </div>
+
+      <label>備註</label>
+      <input type="text" id="adjust-notes" placeholder="選填" class="de-form">
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeAdjustModal()">取消</button>
+        <button type="submit" class="btn btn-gold">確認</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════ MODAL: 卡片快速調整 ══════ -->
+<div id="quick-adjust-modal" class="modal-box">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="quick-adjust-title">調整庫存</h2>
+      <button class="btn-close" onclick="closeQuickAdjustModal()">✕</button>
+    </div>
+    <form id="quick-adjust-form" onsubmit="submitQuickAdjust(event);return false">
+      <input type="hidden" id="quick-adjust-id">
+      <input type="hidden" id="quick-adjust-type">
+      <p id="quick-adjust-product-name" class="adjust-name"></p>
+      <p class="adjust-current">目前庫存：<strong id="quick-adjust-current-qty">0</strong></p>
+
+      <label id="quick-adjust-label">進貨數量</label>
+      <input type="number" id="quick-adjust-change" step="any" required class="de-form" placeholder="例：5" min="1">
+      <p style="font-size:12px;color:var(--text-muted);margin-top:4px">或快速調整：<button type="button" class="btn btn-in btn-xs" onclick="quickSetChange(1)">+1</button> <button type="button" class="btn btn-in btn-xs" onclick="quickSetChange(5)">+5</button> <button type="button" class="btn btn-in btn-xs" onclick="quickSetChange(10)">+10</button></p>
+
+      <label>備註</label>
+      <input type="text" id="quick-adjust-notes" placeholder="選填" class="de-form">
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" onclick="closeQuickAdjustModal()">取消</button>
+        <button type="submit" class="btn btn-gold">確認</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ══════ DETAIL DRAWER ══════ -->
+<div id="detail-overlay" class="detail-overlay" onclick="closeDetail()"></div>
+<div id="detail-drawer" class="detail-drawer">
+  <div class="detail-header">
+    <h2 id="detail-name"></h2>
+    <button class="btn-close" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="detail-body">
+    <img id="detail-photo" src="" alt="" style="display:none" class="detail-photo">
+    <div class="detail-kpi">
+      <div class="kpi-item"><span class="kpi-label">數量</span><span id="detail-qty" class="kpi-value">0</span></div>
+      <div class="kpi-item"><span class="kpi-label">分類</span><span id="detail-category" class="kpi-value">-</span></div>
+      <div class="kpi-item"><span class="kpi-label">安全庫存</span><span id="detail-min-qty" class="kpi-value">0</span></div>
+      <div class="kpi-item"><span class="kpi-label">備註</span><span id="detail-notes" class="kpi-value">-</span></div>
+    </div>
+    <div class="detail-actions">
+      <button class="btn btn-gold btn-sm" id="detail-edit-btn">✏️ 編輯</button>
+      <button class="btn btn-outline btn-sm" id="detail-adjust-btn">📊 進出貨</button>
+      <button class="btn btn-danger btn-sm" id="detail-delete-btn">🗑 刪除</button>
+    </div>
+    <h3>異動記錄</h3>
+    <div id="detail-logs" class="log-list"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="/static/zxing-library.min.js"></script>
+<script src="/static/zxing-browser.min.js"></script>
+<script src="/static/app.js?v=49"></script>
+</body>
+</html>
