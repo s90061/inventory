@@ -26,6 +26,8 @@ Self-hosted inventory tracker with FastAPI + SQLite backend and vanilla HTML/CSS
 
 ## Quick Install
 
+### Linux / macOS
+
 ```bash
 # Clone
 git clone https://github.com/s90061/inventory.git ~/inventory && cd ~/inventory
@@ -37,7 +39,64 @@ pip install fastapi uvicorn python-multipart
 python server.py
 ```
 
+### Windows
+
+```powershell
+# Clone
+git clone https://github.com/s90061/inventory.git %USERPROFILE%\inventory
+cd %USERPROFILE%\inventory
+
+# Install dependencies
+pip install fastapi uvicorn python-multipart
+
+# Start server (port 8090)
+python server.py
+```
+
 Open http://localhost:8090 in your browser.
+
+### Windows (Python embeddable — no admin required)
+
+If you can't install Python system-wide, use the [embeddable package](https://www.python.org/downloads/windows/):
+
+```powershell
+# 1. Download python-3.11.x-embed-amd64.zip from python.org
+#    Extract to C:\inventory\python\
+
+# 2. Enable pip — edit python311._pth, uncomment:
+#    # import site  →  import site
+
+# 3. Install pip
+curl -sS https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python get-pip.py
+
+# 4. Install dependencies
+python -m pip install fastapi uvicorn python-multipart
+
+# 5. Clone repo into C:\inventory\app\
+cd C:\inventory
+git clone https://github.com/s90061/inventory.git app
+
+# 6. Run
+cd app
+..\python\python.exe server.py
+```
+
+Open http://localhost:8090 in your browser.
+
+### One-click Windows Batch (start.bat)
+
+Save as `start.bat` in the inventory folder:
+
+```bat
+@echo off
+cd /d "%~dp0"
+echo Starting Inventory Management System...
+python server.py
+pause
+```
+
+Double-click `start.bat` to launch.
 
 ## Architecture
 

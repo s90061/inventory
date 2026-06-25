@@ -22,12 +22,41 @@ FastAPI + SQLite 庫存管理系統，運行於 :8090。
 
 ## 快速啟動
 
+### Linux / macOS
+
 ```bash
+git clone https://github.com/s90061/inventory.git ~/inventory && cd ~/inventory
 pip install fastapi uvicorn python-multipart
 python server.py
 ```
 
-伺服器啟動於 http://0.0.0.0:8090
+### Windows (Command Prompt)
+
+```cmd
+git clone https://github.com/s90061/inventory.git %USERPROFILE%\inventory
+cd %USERPROFILE%\inventory
+pip install fastapi uvicorn python-multipart
+python server.py
+```
+
+### Windows 一鍵啟動
+
+雙擊 `start.bat` 即可啟動伺服器。
+
+### Windows（免安裝 Python — embeddable）
+
+無管理員權限時，使用 [Python embeddable package](https://www.python.org/downloads/windows/)：
+
+1. 下載 `python-3.11.x-embed-amd64.zip`，解壓至 `C:\inventory\python\`
+2. 編輯 `python311._pth`，取消註解 `import site`
+3. 執行 `python get-pip.py` 安裝 pip
+4. `python -m pip install fastapi uvicorn python-multipart`
+5. `git clone https://github.com/s90061/inventory.git C:\inventory\app`
+6. `cd C:\inventory\app && ..\python\python.exe server.py`
+
+---
+
+伺服器啟動於 http://localhost:8090
 
 ## 技術棧
 
