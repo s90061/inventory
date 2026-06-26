@@ -20,7 +20,7 @@ FastAPI + SQLite 自架庫存管理系統，金色奢華暗色主題，支援條
 
 ## 📸 截圖
 
-> 開啟 http://localhost:8090 即可體驗完整介面
+![Inventory Management System](screenshot.jpg)
 
 ## 🚀 快速啟動
 
