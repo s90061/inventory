@@ -483,4 +483,10 @@ def report_page():
 app.mount("/static", StaticFiles(directory=str(STATIC)), name="static")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8090)
+    import webbrowser
+    port = 8090
+    url = f"http://localhost:{port}"
+    # Open browser after a short delay so server is ready
+    import threading
+    threading.Timer(1.5, lambda: webbrowser.open(url)).start()
+    uvicorn.run(app, host="0.0.0.0", port=port)
